@@ -1,6 +1,13 @@
 #include "machine/asm.h"
 
 #define GPR_COUNT 13
+/* Align up for FPR to avoid unaligned access on grlen == 32 & frlen == 64 */
+#define ALIGN_UP(x, align) (((x) + (align) - 1) & ~((align) - 1))
+#ifdef __loongarch_soft_float
+#define FR_OFFSET (GPR_COUNT * SZREG)
+#else
+#define FR_OFFSET ALIGN_UP((GPR_COUNT * SZREG), SZFREG)
+#endif
 #define GPR_LAYOUT			\
 	GPR_OFFSET (ra, 0);		\
 	GPR_OFFSET (sp, 1);		\
@@ -29,9 +36,15 @@
 /* int setjmp (jmp_buf);  */
 LEAF_NO_ALIGN(setjmp)
 #define GPR_OFFSET(NAME, OFFS) REG_S NAME, a0, OFFS * SZREG
-#define FPR_OFFSET(NAME, OFFS) FREG_S NAME, a0, GPR_COUNT * SZREG + OFFS * SZFREG
+#ifndef __loongarch_soft_float
+#define FPR_OFFSET(NAME, OFFS) FREG_S NAME, a0, FR_OFFSET + OFFS * SZFREG
+#else
+#define FPR_OFFSET(NAME, OFFS)
+#endif
 	GPR_LAYOUT
+#ifndef __loongarch_soft_float
 	FPR_LAYOUT
+#endif
 #undef  GPR_OFFSET
 #undef  FPR_OFFSET
 	move     a0, zero
@@ -40,12 +53,18 @@ END(setjmp)
 
 LEAF_NO_ALIGN(longjmp)
 #define GPR_OFFSET(NAME, OFFS) REG_L NAME, a0, OFFS * SZREG
-#define FPR_OFFSET(NAME, OFFS) FREG_L NAME, a0, GPR_COUNT * SZREG + OFFS * SZFREG
+#ifndef __loongarch_soft_float
+#define FPR_OFFSET(NAME, OFFS) FREG_L NAME, a0, FR_OFFSET + OFFS * SZFREG
+#else
+#define FPR_OFFSET(NAME, OFFS)
+#endif
 	GPR_LAYOUT
+#ifndef __loongarch_soft_float
 	FPR_LAYOUT
+#endif
 #undef  GPR_OFFSET
 #undef  FPR_OFFSET
 	sltui	a0, a1, 1
-	add.d	a0, a0, a1   # a0 = (a1 == 0) ? 1 : a1
+	ADD	a0, a0, a1   # a0 = (a1 == 0) ? 1 : a1
 	jr      ra
 END(longjmp)

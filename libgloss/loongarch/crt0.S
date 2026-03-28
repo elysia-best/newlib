@@ -8,8 +8,8 @@ _start:
   # Clear the bss segment
   la      a0, _edata
   la      a2, _end
-  sub.d   a2, a2, a0
-  li.d    a1, 0
+  SUB     a2, a2, a0
+  LI      a1, 0
   la.global  ra, memset
   jirl    ra, ra, 0
 
@@ -32,14 +32,14 @@ _start:
   la.global   ra, __libc_init_array   # Run global initialization functions
   jirl    ra, ra, 0
 
-  ld.d    a0, sp, 0                  # a0 = argc
-  addi.d  a1, sp, SZREG              # a1 = argv
-  li.d    a2, 0                      # a2 = envp = NULL
+  REG_L   a0, sp, 0                  # a0 = argc
+  ADDI    a1, sp, SZREG              # a1 = argv
+  LI      a2, 0                      # a2 = envp = NULL
   la.global  ra, main
 
   # save orignal sp to s0 and make sp 16 bytes aligned
   move    s0, sp
-  bstrins.d  sp, zero, 3, 0
+  BSTRINS  sp, zero, 3, 0
 
   jirl    ra, ra, 0
 

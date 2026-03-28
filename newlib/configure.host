@@ -176,7 +176,7 @@ case "${host_cpu}" in
   lm32)
 	machine_dir=lm32
 	;;
-  loongarch*)
+  loongarch32|loongarch64)
         machine_dir=loongarch
         newlib_cflags="${newlib_cflags} -DHAVE_RENAME"
         have_init_fini=no
@@ -662,7 +662,7 @@ case "${host}" in
   lm32-*-*)
 	syscall_dir=syscalls
 	;;
-  loongarch*-*-*)
+  loongarch32-*-*|loongarch64-*-*)
         syscall_dir=syscalls
         ;;
   m32c-*-*)
