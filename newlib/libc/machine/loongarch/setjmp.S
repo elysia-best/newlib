@@ -1,7 +1,9 @@
 #include "machine/asm.h"
 
 #define GPR_COUNT 13
-/* Align up for FPR to avoid unaligned access on grlen == 32 & frlen == 64 */
+/* Align up for FPR to avoid unaligned access on grlen == 32 & frlen == 64.
+ * ALIGN_UP requires power-of-two align values.
+ */
 #define ALIGN_UP(x, align) (((x) + (align) - 1) & ~((align) - 1))
 #ifdef __loongarch_soft_float
 #define FR_OFFSET (GPR_COUNT * SZREG)
@@ -65,6 +67,6 @@ LEAF_NO_ALIGN(longjmp)
 #undef  GPR_OFFSET
 #undef  FPR_OFFSET
 	sltui	a0, a1, 1
-	ADD	a0, a0, a1   # a0 = (a1 == 0) ? 1 : a1
+	ADD	a0, a0, a1   # return (a1 == 0) ? 1 : a1
 	jr      ra
 END(longjmp)

@@ -268,14 +268,16 @@ _BEGIN_STD_C
 #endif
 
 #ifdef __loongarch__
+#define _LOONGARCH_FPR_COUNT 8
+/* Match general register width used by setjmp.S save/restore offsets. */
 #define _JBTYPE unsigned long
 #ifdef __loongarch_soft_float
 #define _JBLEN 13
 #elif __loongarch_frlen > 32 && __loongarch_grlen <= 32
-/* Extra padding for alignment */
-#define _JBLEN (13 + 1 + (8 * (__loongarch_frlen / __loongarch_grlen)))
+/* Extra slot keeps FR area aligned when grlen is 32 and frlen is 64. */
+#define _JBLEN (13 + 1 + (_LOONGARCH_FPR_COUNT * (__loongarch_frlen / __loongarch_grlen)))
 #else
-#define _JBLEN (13 + (8 * (__loongarch_frlen / __loongarch_grlen)))
+#define _JBLEN (13 + (_LOONGARCH_FPR_COUNT * (__loongarch_frlen / __loongarch_grlen)))
 #endif
 #endif
 
