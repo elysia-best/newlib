@@ -1,7 +1,8 @@
 #include "machine/asm.h"
 
 #define GPR_COUNT 13
-/* Align up for FPR to avoid unaligned access on grlen == 32 & frlen == 64.
+/* Align up for FPR to avoid unaligned access when GRLEN (general register
+ * length) is 32 and FRLEN (floating-point register length) is 64.
  * ALIGN_UP is only valid for power-of-two align values (the align parameter
  * is SZFREG here), because this bit-mask form rounds correctly only for
  * power-of-two alignment.
