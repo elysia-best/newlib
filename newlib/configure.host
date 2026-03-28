@@ -178,7 +178,7 @@ case "${host_cpu}" in
 	;;
   loongarch32|loongarch64)
         machine_dir=loongarch
-        newlib_cflags="${newlib_cflags} -DHAVE_RENAME"
+        newlib_cflags="${newlib_cflags} -DHAVE_RENAME -D_COMPILING_NEWLIB"
         have_init_fini=no
 	;;
   m32c)
