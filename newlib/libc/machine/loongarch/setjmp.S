@@ -2,8 +2,9 @@
 
 #define GPR_COUNT 13
 /* Align up for FPR to avoid unaligned access on grlen == 32 & frlen == 64.
- * ALIGN_UP is only valid for power-of-two align values (SZFREG here), as the
- * bit-mask form rounds correctly only for power-of-two alignment.
+ * ALIGN_UP is only valid for power-of-two align values (the align parameter
+ * is SZFREG here), because this bit-mask form rounds correctly only for
+ * power-of-two alignment.
  */
 #define ALIGN_UP(x, align) (((x) + (align) - 1) & ~((align) - 1))
 #ifdef __loongarch_soft_float
