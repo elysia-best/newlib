@@ -2,7 +2,8 @@
 
 #define GPR_COUNT 13
 /* Align up for FPR to avoid unaligned access on grlen == 32 & frlen == 64.
- * ALIGN_UP requires power-of-two align values.
+ * ALIGN_UP is only valid for power-of-two align values (SZFREG here), as the
+ * bit-mask form rounds correctly only for power-of-two alignment.
  */
 #define ALIGN_UP(x, align) (((x) + (align) - 1) & ~((align) - 1))
 #ifdef __loongarch_soft_float
@@ -67,6 +68,6 @@ LEAF_NO_ALIGN(longjmp)
 #undef  GPR_OFFSET
 #undef  FPR_OFFSET
 	sltui	a0, a1, 1
-	ADD	a0, a0, a1   # return (a1 == 0) ? 1 : a1
+	ADD	a0, a0, a1   # a0 = (a1 == 0) ? 1 : a1
 	jr      ra
 END(longjmp)

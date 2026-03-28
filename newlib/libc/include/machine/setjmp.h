@@ -269,13 +269,17 @@ _BEGIN_STD_C
 
 #ifdef __loongarch__
 #define _LOONGARCH_FPR_COUNT 8
+#define _LOONGARCH_JBLEN_ALIGN_SLOT 1
 /* Match general register width used by setjmp.S save/restore offsets. */
 #define _JBTYPE unsigned long
 #ifdef __loongarch_soft_float
 #define _JBLEN 13
-#elif __loongarch_frlen > 32 && __loongarch_grlen <= 32
+#if (__loongarch_frlen % __loongarch_grlen) != 0
+#error __loongarch_frlen must be divisible by __loongarch_grlen
+#endif
+#elif __loongarch_frlen == 64 && __loongarch_grlen <= 32
 /* Extra slot keeps FR area aligned when grlen is 32 and frlen is 64. */
-#define _JBLEN (13 + 1 + (_LOONGARCH_FPR_COUNT * (__loongarch_frlen / __loongarch_grlen)))
+#define _JBLEN (13 + _LOONGARCH_JBLEN_ALIGN_SLOT + (_LOONGARCH_FPR_COUNT * (__loongarch_frlen / __loongarch_grlen)))
 #else
 #define _JBLEN (13 + (_LOONGARCH_FPR_COUNT * (__loongarch_frlen / __loongarch_grlen)))
 #endif
